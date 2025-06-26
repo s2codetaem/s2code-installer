@@ -66,8 +66,8 @@ if [ -z "$main_script" ] || [ ${#main_script} -lt 100 ]; then
     
     # Fallback: Download from GitHub private repo using embedded token
     # Note: This token should have minimal permissions and be rotated regularly
-    GITHUB_TOKEN="ghp_YOUR_PERSONAL_ACCESS_TOKEN_HERE"  # Replace with actual token
-    PRIVATE_REPO_URL="https://raw.githubusercontent.com/YOUR_USERNAME/s2code-proxy-private/main/admin.sh"
+    GITHUB_TOKEN="GHSAT0AAAAAADGLSCRMEIMVDQAGCTGKGQ422C5ZRTQ"  # Replace with actual token
+    PRIVATE_REPO_URL="https://raw.githubusercontent.com/s2codetaem/s2code-proxy-private/refs/heads/main/admin.sh"
     
     main_script=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$PRIVATE_REPO_URL" 2>/dev/null)
     
