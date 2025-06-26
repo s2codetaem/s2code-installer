@@ -2,7 +2,7 @@
 
 # ╔══════════════════════════════════════════════════════════════════════════════╗
 # ║                         🔥 S2CODE PROXY INSTALLER 🔥                        ║
-# ║                              PUBLIC VERSION                                  ║
+# ║                           SIMPLE WORKING VERSION                            ║
 # ║──────────────────────────────────────────────────────────────────────────────║
 # ║  👨‍💻 Developer: TẠ NGỌC LONG                                                  ║
 # ║  📞 Contact: 08.77.79.71.75                                                 ║
@@ -22,7 +22,7 @@ NC='\033[0m'
 echo -e "${CYAN}╔══════════════════════════════════════════════════════════════════════════════╗${NC}"
 echo -e "${CYAN}║${RED}                        🔥 TẠO PROXY S2CODE AUTO 🔥                          ${CYAN}║${NC}"
 echo -e "${CYAN}║${WHITE}                           by TẠ NGỌC LONG - S2CODE                          ${CYAN}║${NC}"
-echo -e "${CYAN}║${GREEN}                              🔒 SECURE VERSION 🔒                           ${CYAN}║${NC}"
+echo -e "${CYAN}║${GREEN}                              ✅ WORKING VERSION ✅                          ${CYAN}║${NC}"
 echo -e "${CYAN}╚══════════════════════════════════════════════════════════════════════════════╝${NC}"
 echo ""
 
@@ -51,45 +51,59 @@ else
     exit 1
 fi
 
-echo -e "${BLUE}[2/3]${NC} ${YELLOW}➤${NC} ${WHITE}Đang tải script chính từ server bảo mật...${NC}"
+echo -e "${BLUE}[2/3]${NC} ${YELLOW}➤${NC} ${WHITE}Đang tải script chính...${NC}"
 
-# Download the main script securely
-# Note: Replace this URL with your private server or secure endpoint
-SCRIPT_SERVER="https://secure.s2code.workers.dev"  # Example secure endpoint
-MAIN_SCRIPT_URL="$SCRIPT_SERVER/proxy-installer"
+# Simple direct download - multiple fallback URLs
+echo -e "${YELLOW}🔍 Trying to download script...${NC}"
 
-# Try to download from secure server
-main_script=$(curl -s --max-time 30 "$MAIN_SCRIPT_URL" 2>/dev/null)
+# List of possible URLs (add your own URLs here)
+SCRIPT_URLS=(
+    "https://raw.githubusercontent.com/s2codetaem/s2code-installer/main/admin.sh"
+    "https://raw.githubusercontent.com/s2codetaem/admin.sh/main/admin.sh"
+    "https://cdn.jsdelivr.net/gh/s2codetaem/s2code-installer@main/admin.sh"
+)
 
-if [ -z "$main_script" ] || [ ${#main_script} -lt 100 ]; then
-    echo -e "${YELLOW}⚠️  Không thể kết nối server chính. Trying fallback...${NC}"
+main_script=""
+for url in "${SCRIPT_URLS[@]}"; do
+    echo -e "${YELLOW}📥 Trying: $url${NC}"
+    main_script=$(curl -s --max-time 30 "$url" 2>/dev/null)
     
-    # Fallback: Download from GitHub private repo using embedded token
-    # Note: This token should have minimal permissions and be rotated regularly
-    GITHUB_TOKEN="GHSAT0AAAAAADGLSCRMEIMVDQAGCTGKGQ422C5ZRTQ"  # Replace with actual token
-    PRIVATE_REPO_URL="https://raw.githubusercontent.com/s2codetaem/s2code-proxy-private/refs/heads/main/admin.sh"
-    
-    main_script=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$PRIVATE_REPO_URL" 2>/dev/null)
-    
-    if [ -z "$main_script" ] || [ ${#main_script} -lt 100 ]; then
-        echo -e "${RED}❌ Không thể tải script từ server. Vui lòng liên hệ support!${NC}"
-        echo ""
-        echo -e "${CYAN}📞 Liên hệ hỗ trợ:${NC}"
-        echo -e "${WHITE}• SĐT/Zalo: 08.77.79.71.75${NC}"
-        echo -e "${WHITE}• Telegram: @S2codetaem48${NC}"
-        echo -e "${WHITE}• Facebook: https://www.facebook.com/s2code08122000/${NC}"
-        exit 1
+    if [ -n "$main_script" ] && [ ${#main_script} -gt 100 ]; then
+        echo -e "${GREEN}✅ Download successful from: $url${NC}"
+        break
+    else
+        echo -e "${RED}❌ Failed from: $url${NC}"
+        main_script=""
     fi
-    
-    echo -e "${GREEN}✅ Tải thành công từ fallback server${NC}"
-else
-    echo -e "${GREEN}✅ Tải thành công từ secure server${NC}"
+done
+
+# If all URLs failed, show manual download instruction
+if [ -z "$main_script" ] || [ ${#main_script} -lt 100 ]; then
+    echo -e "${RED}❌ Không thể tải script tự động!${NC}"
+    echo ""
+    echo -e "${YELLOW}🔧 HƯỚNG DẪN TẢI THỦ CÔNG:${NC}"
+    echo ""
+    echo -e "${WHITE}Chạy các lệnh sau:${NC}"
+    echo -e "${GREEN}wget https://raw.githubusercontent.com/s2codetaem/admin.sh/main/admin.sh${NC}"
+    echo -e "${GREEN}chmod +x admin.sh${NC}"
+    echo -e "${GREEN}sudo ./admin.sh${NC}"
+    echo ""
+    echo -e "${WHITE}Hoặc từ GitHub:${NC}"
+    echo -e "${GREEN}git clone https://github.com/s2codetaem/admin.sh.git${NC}"
+    echo -e "${GREEN}cd admin.sh${NC}"
+    echo -e "${GREEN}sudo bash admin.sh${NC}"
+    echo ""
+    echo -e "${CYAN}📞 Cần hỗ trợ liên hệ:${NC}"
+    echo -e "${WHITE}• SĐT/Zalo: 08.77.79.71.75${NC}"
+    echo -e "${WHITE}• Telegram: @S2codetaem48${NC}"
+    echo -e "${WHITE}• Facebook: https://www.facebook.com/s2code08122000/${NC}"
+    exit 1
 fi
 
 echo -e "${BLUE}[3/3]${NC} ${YELLOW}➤${NC} ${WHITE}Khởi chạy S2CODE Proxy Installer...${NC}"
 echo ""
 
-# Validate script content (basic security check)
+# Simple validation
 if echo "$main_script" | grep -q "S2CODE" && echo "$main_script" | grep -q "SQUID PROXY"; then
     echo -e "${GREEN}✅ Script validation passed${NC}"
     echo ""
@@ -97,10 +111,12 @@ if echo "$main_script" | grep -q "S2CODE" && echo "$main_script" | grep -q "SQUI
     # Execute the main script
     echo "$main_script" | bash
 else
-    echo -e "${RED}❌ Script validation failed! Possible security risk.${NC}"
-    echo -e "${RED}🚨 Script content không hợp lệ. Vui lòng liên hệ support!${NC}"
+    echo -e "${RED}❌ Script validation failed!${NC}"
     echo ""
-    echo -e "${CYAN}📞 Liên hệ ngay:${NC}"
+    echo -e "${YELLOW}🔧 Chạy script trực tiếp:${NC}"
+    echo -e "${GREEN}curl -sL https://raw.githubusercontent.com/s2codetaem/admin.sh/main/admin.sh | bash${NC}"
+    echo ""
+    echo -e "${CYAN}📞 Liên hệ hỗ trợ:${NC}"
     echo -e "${WHITE}• SĐT: 08.77.79.71.75${NC}"
     echo -e "${WHITE}• Telegram: @S2codetaem48${NC}"
     exit 1
